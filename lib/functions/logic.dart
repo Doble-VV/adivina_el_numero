@@ -3,6 +3,18 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class Logic {
+  static String frases() {
+    List<String> list = [
+      'Eso estuvo cerca',
+      '¡Ja! ni te acercas',
+      'Vamos, ¿eso es todo?',
+      'Vamos, vuelve a intentarlo',
+    ];
+    Random random = Random();
+    int indiceAleatorio = random.nextInt(list.length);
+    return list[indiceAleatorio];
+  }
+
   static String dificultad(int value) {
     return value == 0
         ? 'Fácil'

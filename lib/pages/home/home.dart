@@ -1,5 +1,6 @@
+// ignore_for_file: avoid_print
 import 'package:adivina_el_numero/functions/logic.dart';
-import 'package:adivina_el_numero/widgets/custom_appbar.dart';
+import 'package:adivina_el_numero/widgets/contenedores.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -15,6 +16,7 @@ class _HomeState extends State<Home> {
   String _dificultad = 'Fácil';
   String _hint = '';
   String _rango = '';
+  String _textoInteractivo = '¿Estas listo?';
   int _length = 2;
   int _numeroBuscado = 0;
   List<Widget> menor = [
@@ -44,6 +46,65 @@ class _HomeState extends State<Home> {
     print('Busca: $_numeroBuscado');
   }
 
+  alerta(String tipo) {
+    tipo == 'lose'
+        ? showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('¡UPS! Suerte para la proxima'),
+                content: const Text('¿Quieres volver a intentarlo?'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      reinicio();
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      'Si, quiero volver a intentarlo',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                  ),
+                ],
+              );
+            },
+          )
+        : showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('PRECAUCION'),
+                content: const Text('¿Seguro que quieres borrar el historial?'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      reinicio();
+                      Navigator.of(context).pop();
+                      historial = [
+                        const Text('Historial',
+                            style: TextStyle(fontSize: 20.0))
+                      ];
+                    },
+                    child: const Text(
+                      'Si',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      'No',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+  }
+
   reinicio() {
     setState(() {
       _dificultad = Logic.dificultad(_slideValue.toInt());
@@ -53,6 +114,7 @@ class _HomeState extends State<Home> {
       _rango = Logic.generarNumero(_dificultad)[3];
       _length = Logic.generarNumero(_dificultad)[4];
       _numeroController.clear();
+      _textoInteractivo = '¿Estas listo?';
       menor = [const Text('Menor que', style: TextStyle(fontSize: 20))];
       mayor = [const Text('Mayor que', style: TextStyle(fontSize: 20.0))];
       print('Busca: $_numeroBuscado');
@@ -61,11 +123,33 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.sizeOf(context);
     return SafeArea(
       child: Scaffold(
-        appBar: const CustomAppbar(
-          title: 'Adivina el número',
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 42, 41, 41),
+          elevation: 10,
+          shadowColor: Colors.grey,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Expanded(
+                child: Text(
+                  'Adivina el número',
+                  style: TextStyle(color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  alerta('');
+                },
+                icon: const Icon(
+                  Icons.replay_outlined,
+                  color: Colors.white,
+                ),
+              )
+            ],
+          ),
         ),
         backgroundColor: Colors.grey,
         body: SingleChildScrollView(
@@ -84,6 +168,7 @@ class _HomeState extends State<Home> {
                   ),
                   Row(
                     children: [
+                      //Input
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.all(20.0),
@@ -93,6 +178,7 @@ class _HomeState extends State<Home> {
                             maxLength: _length,
                             onFieldSubmitted: (String value) {
                               setState(() {
+                                _numeroController.clear();
                                 List<dynamic> result = Logic.validarNumero(
                                   value,
                                   _numeroBuscado,
@@ -108,8 +194,9 @@ class _HomeState extends State<Home> {
                                 result[4] == 'Bien'
                                     ? reinicio()
                                     : _intentos == 0
-                                        ? reinicio()
+                                        ? alerta('lose')
                                         : null;
+                                _textoInteractivo = Logic.frases();
                               });
                             },
                             decoration: InputDecoration(
@@ -122,6 +209,7 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ),
+                      //Intentos
                       Expanded(
                         child: Column(
                           children: [
@@ -140,62 +228,17 @@ class _HomeState extends State<Home> {
                   ),
                   Row(
                     children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Container(
-                            height: size.height * 0.35,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10.0),
-                              ),
-                            ),
-                            child: Column(
-                              children: mayor,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Container(
-                            height: size.height * 0.35,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10.0),
-                              ),
-                            ),
-                            child: Column(
-                              children: menor,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Container(
-                            height: size.height * 0.35,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10.0),
-                              ),
-                            ),
-                            child: Column(
-                              children: historial,
-                            ),
-                          ),
-                        ),
-                      ),
+                      Contenedores(lista: mayor),
+                      Contenedores(lista: menor),
+                      Contenedores(lista: historial),
                     ],
                   ),
-                  Text(
-                    'Dificultad: $_dificultad',
-                    style: const TextStyle(fontSize: 20.0),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Dificultad: $_dificultad',
+                      style: const TextStyle(fontSize: 20.0),
+                    ),
                   ),
                   Slider(
                     value: _slideValue,
@@ -208,6 +251,10 @@ class _HomeState extends State<Home> {
                       });
                       reinicio();
                     },
+                  ),
+                  Text(
+                    _textoInteractivo,
+                    style: const TextStyle(fontSize: 20.0),
                   ),
                 ],
               ),

@@ -1,0 +1,66 @@
+import 'dart:math';
+
+import 'package:flutter/material.dart';
+
+class Logic {
+  static String dificultad(int value) {
+    return value == 0
+        ? 'Fácil'
+        : value == 1
+            ? 'Medio'
+            : value == 2
+                ? 'Avanzado'
+                : 'Extremo';
+  }
+
+  static List generarNumero(String dificultad) {
+    var random = Random();
+    switch (dificultad) {
+      case 'Fácil':
+        return [random.nextInt(10) + 1, 5, '##', '10', 2];
+      case 'Medio':
+        return [random.nextInt(20) + 1, 8, '##', '20', 2];
+      case 'Avanzado':
+        return [random.nextInt(100) + 1, 15, '###', '100', 3];
+      case 'Extremo':
+        return [random.nextInt(1000) + 1, 25, '####', '1000', 4];
+      default:
+        return [random.nextInt(10) + 1, 5, '##', '10', 2];
+    }
+  }
+
+  static List<dynamic> validarNumero(
+      String numeroElegido,
+      int numeroBuscado,
+      int intentos,
+      List<Widget> mayor,
+      List<Widget> menor,
+      List<Widget> historial) {
+    if (intentos - 1 != 0) {
+      int? numeroIngresado = int.tryParse(numeroElegido);
+      if (numeroIngresado != null) {
+        if (numeroIngresado > numeroBuscado) {
+          menor
+              .add(Text(numeroElegido, style: const TextStyle(fontSize: 20.0)));
+          intentos -= 1;
+        } else if (numeroIngresado < numeroBuscado) {
+          mayor
+              .add(Text(numeroElegido, style: const TextStyle(fontSize: 20.0)));
+          intentos -= 1;
+        } else {
+          historial.add(Text(numeroBuscado.toString(),
+              style: const TextStyle(
+                  fontSize: 20.0, color: Color.fromARGB(255, 27, 90, 29))));
+          return [intentos, mayor, menor, historial, 'Bien'];
+        }
+      }
+    } else {
+      intentos -= 1;
+      historial.add(Text(numeroBuscado.toString(),
+          style: const TextStyle(
+              fontSize: 20.0, color: Color.fromARGB(255, 167, 13, 13))));
+      return [intentos, mayor, menor, historial, 'Mal'];
+    }
+    return [intentos, mayor, menor, historial, 'Mal'];
+  }
+}

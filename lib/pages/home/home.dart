@@ -1,3 +1,4 @@
+import 'package:adivina_el_numero/functions/validacion.dart';
 import 'package:adivina_el_numero/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,15 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   double _slideValue = 0;
+  String _intentos = '';
+  String _dificultad = 'Fácil';
+
+  @override
+  void initState() {
+    super.initState();
+    _intentos = Numero.generarNumero(_dificultad)[1];
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
@@ -45,16 +55,16 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Column(
                           children: [
-                            Text(
+                            const Text(
                               'Intentos restantes: ',
                               style: TextStyle(fontSize: 20.0),
                             ),
                             Text(
-                              '5',
-                              style: TextStyle(fontSize: 20.0),
+                              _intentos,
+                              style: const TextStyle(fontSize: 20.0),
                             ),
                           ],
                         ),
@@ -131,17 +141,21 @@ class _HomeState extends State<Home> {
                       ),
                     ],
                   ),
-                  const Text(
-                    'Dificultad: ',
-                    style: TextStyle(fontSize: 20.0),
+                  Text(
+                    'Dificultad: $_dificultad',
+                    style: const TextStyle(fontSize: 20.0),
                   ),
                   Slider(
                     value: _slideValue,
                     divisions: 3,
                     max: 3,
-                    label: 'Facil',
+                    label: _dificultad,
                     onChanged: (double value) {
-                      _slideValue = value;
+                      setState(() {
+                        _slideValue = value;
+                        _dificultad = Numero.dificultad(value.toInt());
+                        _intentos = Numero.generarNumero(_dificultad)[1];
+                      });
                     },
                   ),
                 ],

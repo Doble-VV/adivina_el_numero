@@ -52,17 +52,23 @@ class Logic {
       int? numeroIngresado = int.tryParse(numeroElegido);
       if (numeroIngresado != null) {
         if (numeroIngresado > numeroBuscado) {
-          menor
-              .add(Text(numeroElegido, style: const TextStyle(fontSize: 20.0)));
+          menor.add(Text(numeroElegido,
+              style: const TextStyle(
+                fontSize: 20.0,
+                color: Colors.white,
+              )));
           intentos -= 1;
         } else if (numeroIngresado < numeroBuscado) {
-          mayor
-              .add(Text(numeroElegido, style: const TextStyle(fontSize: 20.0)));
+          mayor.add(Text(numeroElegido,
+              style: const TextStyle(
+                fontSize: 20.0,
+                color: Colors.white,
+              )));
           intentos -= 1;
         } else {
           historial.add(Text(numeroBuscado.toString(),
               style: const TextStyle(
-                  fontSize: 20.0, color: Color.fromARGB(255, 27, 90, 29))));
+                  fontSize: 20.0, color: Color.fromARGB(255, 47, 154, 51))));
           return [intentos, mayor, menor, historial, 'Bien'];
         }
       }
@@ -70,7 +76,7 @@ class Logic {
       intentos -= 1;
       historial.add(Text(numeroBuscado.toString(),
           style: const TextStyle(
-              fontSize: 20.0, color: Color.fromARGB(255, 167, 13, 13))));
+              fontSize: 20.0, color: Color.fromARGB(255, 170, 38, 38))));
       return [intentos, mayor, menor, historial, 'Mal'];
     }
     return [intentos, mayor, menor, historial, 'Mal'];

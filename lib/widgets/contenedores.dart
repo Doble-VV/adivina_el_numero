@@ -22,8 +22,10 @@ class Contenedores extends StatelessWidget {
               Radius.circular(10.0),
             ),
           ),
-          child: Column(
-            children: lista,
+          child: SingleChildScrollView(
+            child: Column(
+              children: lista,
+            ),
           ),
         ),
       ),
